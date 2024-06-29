@@ -40,16 +40,16 @@ jobs:
 
     - name: Deploy to VM
       env:
-        SSH_HOST: 54.80.54.212
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_HOST: 128.199.167.11
         SSH_USER: root
-        password: ${{ secrets.SERVER_PASSWORD }}
       run: |
         TAG=${{ steps.set-tag-name.outputs.tag }}
         echo "$SSH_PRIVATE_KEY" > private_key
         chmod 600 private_key
 
         # Check if container with the same name already exists and remove it
-        ssh -i password -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+        ssh -i private_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
           if docker ps -a --format '{{.Names}}' | grep -q '^hello-world-test-$TAG$'; then
             docker stop hello-world-test-$TAG
             docker rm hello-world-test-$TAG
@@ -60,3 +60,4 @@ jobs:
         ssh -i private_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
           docker pull ridhwane/hello-world-test:$TAG
           docker run -d -p $(if [ $TAG == 'dev' ]; then echo '3080'; else echo '3090'; fi):3000 --name hello-world-test-$TAG ridhwane/hello-world-test:$TAG
+        "
