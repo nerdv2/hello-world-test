@@ -35,8 +35,8 @@ jobs:
     - name: Build and push Docker image
       run: |
         TAG=${{ steps.set-tag-name.outputs.tag }}
-        docker build -t ridhwane/hello-world-test:$TAG .
-        docker push ridhwane/hello-world-test:$TAG
+        docker build -t ridhwan31/hello-world-test:$TAG .
+        docker push ridhwan31/hello-world-test:$TAG
 
     - name: Deploy to VM
       env:
@@ -58,6 +58,6 @@ jobs:
 
         # Pull the latest image and run the container
         ssh -i private_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
-          docker pull ridhwane/hello-world-test:$TAG
-          docker run -d -p $(if [ $TAG == 'dev' ]; then echo '3080'; else echo '3090'; fi):3000 --name hello-world-test-$TAG ridhwane/hello-world-test:$TAG
+          docker pull ridhwan31/hello-world-test:$TAG
+          docker run -d -p $(if [ $TAG == 'dev' ]; then echo '3080'; else echo '3090'; fi):3000 --name hello-world-test-$TAG ridhwan31/hello-world-test:$TAG
         "
